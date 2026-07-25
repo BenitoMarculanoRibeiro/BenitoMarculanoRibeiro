@@ -2,7 +2,7 @@
   <svg x="0" y="0" width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="0.5" y="0.5" rx="4.5" width="109" height="109" fill="#282A36"/>
     <text x="50%" y="18" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="12" fill="#FF79C6">Contribuições</text>
-    <text x="50%" y="68" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="30" fill="#FF79C6">477</text>
+    <text x="50%" y="68" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="30" fill="#FF79C6">478</text>
     <text x="50%" y="89" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.5" fill="#F8F8F2">Total</text>
     <rect x="14" y="103" rx="1.5" width="82" height="3" fill="#FF79C6" opacity="0.85"/>
   </svg>
@@ -463,7 +463,7 @@ Created by potrace 1.15, written by Peter Selinger 2001-2017
   
           <text x="50%" y="18" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="13" fill="#ff79c6">Commits</text>
           <text x="50%" y="85" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="10.5" fill="#f8f8f2">Committer Médio</text>
-          <text x="50%" y="97" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="10" fill="#f8f8f2">83pt</text>
+          <text x="50%" y="97" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="10" fill="#f8f8f2">84pt</text>
           
     <style>
     @keyframes CommitsRankAnimation {
@@ -471,7 +471,7 @@ Created by potrace 1.15, written by Peter Selinger 2001-2017
         width: 0px;
       }
       to {
-        width: 64.88888888888889px;
+        width: 65.77777777777777px;
       }
     }
     #Commits-rank-progress{
