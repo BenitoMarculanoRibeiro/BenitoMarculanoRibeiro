@@ -58,3 +58,16 @@ Formado em Análise e Desenvolvimento de Sistemas pelo IFES, atualmente curso a 
 <div align="center">
   <img alt="Contribuições e troféus do perfil no GitHub" width="100%" src="assets/github-trophies-pt-br.svg">
 </div>
+
+As estatísticas são validadas e atualizadas automaticamente após cada push na
+branch `main`, uma vez por hora e também por execução manual do workflow. O
+commit automático que altera somente o SVG não inicia uma nova execução.
+
+### Desenvolvimento
+
+Requer Node.js 20 ou superior:
+
+```bash
+npm test
+npm run update-trophies
+```

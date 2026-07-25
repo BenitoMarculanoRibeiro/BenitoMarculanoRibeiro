@@ -1,0 +1,13 @@
+{
+  "name": "benito-marculano-ribeiro-profile",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "update-trophies": "node scripts/update-github-trophies.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,12 +1,21 @@
 name: Atualizar troféus do GitHub
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "assets/github-trophies-pt-br.svg"
   schedule:
-    - cron: "23 3 * * *"
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-github-trophies
+  cancel-in-progress: false
 
 jobs:
   update-trophies:
@@ -21,8 +30,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Executar testes
+        run: npm test
+
       - name: Gerar troféus em português
-        run: node scripts/update-github-trophies.mjs
+        run: npm run update-trophies
 
       - name: Publicar alterações
         shell: bash
@@ -35,5 +47,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/github-trophies-pt-br.svg
-          git commit -m "chore: atualizar troféus do GitHub"
-          git push
+          git commit -m "chore: atualizar troféus do GitHub [skip ci]"
+          git push origin HEAD:${GITHUB_REF_NAME}
