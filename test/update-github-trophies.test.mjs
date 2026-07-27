@@ -3,16 +3,23 @@ import test from "node:test";
 
 import {
   buildSourceUrl,
+  downloadSourceSvgs,
   escapeXml,
   extractMetric,
   fetchSvg,
   nestSvg,
   renderMetricPanel,
+  validateStreakSvg,
   validateSvg,
   validateUsername,
 } from "../scripts/update-github-trophies.mjs";
 
 const safeSvg = `<svg xmlns="http://www.w3.org/2000/svg"><text>OK</text></svg>`;
+const streakSvg = `<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Total Contributions big number --><text>482</text>
+  <!-- Current Streak big number --><text>4</text>
+  <!-- Longest Streak big number --><text>13</text>
+</svg>`;
 
 test("valida nomes de usuário e rejeita entradas inválidas", () => {
   assert.doesNotThrow(() => validateUsername("BenitoMarculanoRibeiro"));
@@ -76,6 +83,49 @@ test("repete falhas temporárias e retorna o SVG válido", async () => {
   assert.equal(calls, 3);
 });
 
+test("repete quando o serviço retorna um SVG de erro com HTTP 200", async () => {
+  let calls = 0;
+  const errorSvg =
+    "<svg><text>Failed to retrieve contributions. This is likely a GitHub API issue.</text></svg>";
+  const result = await fetchSvg(
+    new URL("https://streak-stats.demolab.com"),
+    {
+      fetchImpl: async () => {
+        calls += 1;
+        return new Response(calls === 1 ? errorSvg : streakSvg, {
+          status: 200,
+          headers: { "content-type": "image/svg+xml" },
+        });
+      },
+      attempts: 2,
+      timeoutMs: 1_000,
+      contentValidator: validateStreakSvg,
+      sleep: async () => {},
+    },
+  );
+
+  assert.equal(result, streakSvg);
+  assert.equal(calls, 2);
+});
+
+test("preserva o artefato quando os serviços continuam indisponíveis", async () => {
+  const warnings = [];
+  const result = await downloadSourceSvgs(
+    new URL("https://trophy.ryglcloud.net"),
+    new URL("https://streak-stats.demolab.com"),
+    {
+      fetchSvgImpl: async () => {
+        throw new Error("indisponível");
+      },
+      logger: { warn: (message) => warnings.push(message) },
+    },
+  );
+
+  assert.equal(result, null);
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /será preservado/);
+});
+
 test("interrompe depois do limite de tentativas", async () => {
   let calls = 0;
   await assert.rejects(
@@ -116,6 +166,11 @@ test("extrai somente uma métrica numérica esperada", () => {
     () => extractMetric("<svg></svg>", "Longest Streak big number"),
     /não encontrada/,
   );
+});
+
+test("exige todas as métricas no SVG de contribuições", () => {
+  assert.equal(validateStreakSvg(streakSvg), true);
+  assert.throws(() => validateStreakSvg(safeSvg), /Métrica não encontrada/);
 });
 
 test("escapa textos ao gerar os painéis", () => {

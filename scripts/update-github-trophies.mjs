@@ -10,6 +10,11 @@ const ALLOWED_HOSTS = new Set([
   "trophy.ryglcloud.net",
   "streak-stats.demolab.com",
 ]);
+const STREAK_METRIC_MARKERS = [
+  "Total Contributions big number",
+  "Current Streak big number",
+  "Longest Streak big number",
+];
 
 const translations = new Map([
   ["MultiLanguage", "Multilíngue"],
@@ -104,10 +109,11 @@ export async function main() {
     locale: "pt_BR",
   });
 
-  const [rawTrophies, streakSvg] = await Promise.all([
-    fetchSvg(trophySource),
-    fetchSvg(streakSource),
-  ]);
+  const sources = await downloadSourceSvgs(trophySource, streakSource);
+  if (!sources) {
+    return false;
+  }
+  const [rawTrophies, streakSvg] = sources;
 
   let trophiesSvg = rawTrophies;
   for (const [original, translated] of translations) {
@@ -133,6 +139,7 @@ export async function main() {
   await mkdir("assets", { recursive: true });
   await writeFile(OUTPUT_PATH, combinedSvg, { encoding: "utf8", flag: "w" });
   console.log("Painel de contribuições e troféus atualizado com sucesso.");
+  return true;
 }
 
 export function validateUsername(username) {
@@ -156,6 +163,7 @@ export async function fetchSvg(
     fetchImpl = globalThis.fetch,
     attempts = MAX_ATTEMPTS,
     timeoutMs = REQUEST_TIMEOUT_MS,
+    contentValidator = validateSvg,
     sleep = (milliseconds) =>
       new Promise((resolve) => setTimeout(resolve, milliseconds)),
   } = {},
@@ -171,6 +179,9 @@ export async function fetchSvg(
   }
   if (!Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 60_000) {
     throw new RangeError("O timeout deve estar entre 100 e 60000 ms.");
+  }
+  if (typeof contentValidator !== "function") {
+    throw new TypeError("O validador de conteúdo deve ser uma função.");
   }
 
   let lastError;
@@ -195,7 +206,7 @@ export async function fetchSvg(
       }
 
       const svg = await response.text();
-      validateSvg(svg, { source: url.hostname });
+      contentValidator(svg, { source: url.hostname });
       return svg;
     } catch (error) {
       lastError = error;
@@ -209,6 +220,24 @@ export async function fetchSvg(
     `Falha ao baixar SVG de ${url.hostname} após ${attempts} tentativas.`,
     { cause: lastError },
   );
+}
+
+export async function downloadSourceSvgs(
+  trophySource,
+  streakSource,
+  { fetchSvgImpl = fetchSvg, logger = console } = {},
+) {
+  try {
+    return await Promise.all([
+      fetchSvgImpl(trophySource),
+      fetchSvgImpl(streakSource, { contentValidator: validateStreakSvg }),
+    ]);
+  } catch (error) {
+    logger.warn(
+      `Serviços externos indisponíveis; o SVG publicado será preservado. ${error.message}`,
+    );
+    return null;
+  }
 }
 
 export function validateSvg(svg, { source = "desconhecida" } = {}) {
@@ -238,6 +267,14 @@ export function validateSvg(svg, { source = "desconhecida" } = {}) {
     throw new Error(`SVG de ${source} contém conteúdo não permitido.`);
   }
 
+  return true;
+}
+
+export function validateStreakSvg(svg, options) {
+  validateSvg(svg, options);
+  for (const marker of STREAK_METRIC_MARKERS) {
+    extractMetric(svg, marker);
+  }
   return true;
 }
 
