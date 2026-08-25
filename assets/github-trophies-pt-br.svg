@@ -2,7 +2,7 @@
   <svg x="0" y="0" width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="0.5" y="0.5" rx="4.5" width="109" height="109" fill="#282A36"/>
     <text x="50%" y="18" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="12" fill="#FF79C6">Contribuições</text>
-    <text x="50%" y="68" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="30" fill="#FF79C6">495</text>
+    <text x="50%" y="68" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="30" fill="#FF79C6">523</text>
     <text x="50%" y="89" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-weight="bold" font-size="10.5" fill="#F8F8F2">Total</text>
     <rect x="14" y="103" rx="1.5" width="82" height="3" fill="#FF79C6" opacity="0.85"/>
   </svg>
